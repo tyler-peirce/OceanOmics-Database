@@ -448,7 +448,8 @@ excel_to_db_cols = {
 		"Comments": "hic_comments"
 	},
 	"Sequencing": {
-		"Sequencing ID": "sequencing_id",
+		"Specimen ID": "og_id",
+        "Sequencing ID": "sequencing_id",
 		"Technology": "technology",
 		"Sequencing Instrument": "instrument",
 		"Sequencing Date": "run_date",

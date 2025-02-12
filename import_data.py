@@ -154,7 +154,7 @@ try:
                 "NCBI_Raw_Reads_Upload": "ncbi_raw_reads_upload",
                 "HiFi - Public": "hifi_public"
             })
-            df = pd.merge(df, tolid_df, on = "og_id")
+            df = pd.merge(df, tolid_df, on = "og_id", how = "left")
 
         # Start building a string to be used in the SQL INSERT/UPDATE query
         cols_to_update = list(name_convert.db_to_excel_cols[db_tble_name].keys())

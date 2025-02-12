@@ -1,0 +1,32 @@
+import requests
+
+from office365.runtime.auth.authentication_context import AuthenticationContext
+from office365.sharepoint.client_context import ClientContext
+
+# Define your SharePoint site URL
+site_url = 'https://uniwa.sharepoint.com/teams/EXT-OceanOmicsLab'
+
+# Authentication cookies (replace with actual values)
+# These will likely need updating. To update you go to sharepoint on chrome browser then press F12 to get developer tools open.
+# Then in developer tools navigate to application tab and copy the values over for the two cookies.
+cookies = {
+    "FedAuth": "77u/PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48U1A+VjE0LDBoLmZ8bWVtYmVyc2hpcHwxMDAzMjAwMjVjODFhNGIyQGxpdmUuY29tLDAjLmZ8bWVtYmVyc2hpcHwwMDExMTIwMkB1d2EuZWR1LmF1LDEzMzgxODkyODU2MDAwMDAwMCwxMzM4MTIyMTI1OTAwMDAwMDAsMTMzODE5NzkyNTcxNzUwMTE1LDEzMC45NS4xODkuMTg0LDIsMDU4OTRhZjAtY2IyOC00NmQ4LTg3MTYtNzRjZGI0NmUyMjI2LCxmNzVhZTdkMy04ZTA2LTQxZmQtODE0MS03NDJkZGQwNGIyNzEsZWM4Njc5YTEtODBkMi00MDAwLTRjNmYtMGM2ODM0OWJjZTAyLGVjODY3OWExLTgwZDItNDAwMC00YzZmLTBjNjgzNDliY2UwMiwsMCwxMzM4MTg5NjQ1NzE1OTM4NjgsMTMzODIxNTIwNTcxNTkzODY4LCwsZXlKNGJYTmZZMk1pT2lKYlhDSkRVREZjSWwwaUxDSjRiWE5mYzNOdElqb2lNU0lzSW5CeVpXWmxjbkpsWkY5MWMyVnlibUZ0WlNJNklqQXdNVEV4TWpBeVFIVjNZUzVsWkhVdVlYVWlMQ0oxZEdraU9pSlliMll6V0dSdU5sRkZTMVZRVXpONGJsUkZia0ZCSW4wPSwyNjUwNDY3NzQzOTk5OTk5OTk5LDEzMzgxODkyODU2MDAwMDAwMCw0YTkwYmRlMS0wMDEzLTQwMmItOTQ3ZC1mZTk5NTBiNDBhYmUsLCwsLCwxMTUyOTIxNTA0NjA2ODQ2OTc2LCwxOTU1ODAsdVhlaFFKUGxlVmpOQ2Jha1VoR0Q2SXlGUVFrLF95SXZaYV9EYkdLd185TDR1OVMtZ1UzUjA1OCxuYzRwdjZxbEp1QU5RcUhJSWhKQ2lXcnhOTmFya0ZjU3hUa2p2R3VGaWk3K0ZpZWU2VUtTZ1RYeW1acXQ5cFJoQndJaC9iYldYcUUvUWw1SWluRzBzMlZmbjdsd28rcWVRbFY1TzBmNTdqS2RIaEI5Q0ZHOXE4Nm9QNzRiR2pidzhaU3FVQnFnbVorbllMN2tjd3FxWm8yYllCdGJ4d1JqZHV5QnY1cWRlU2NHcGwxY3ZKR2ZWWFcxZ1UxN0Y2emIzeDdjcjdIeTBEdEhKMzNkMm1CaXRwVE5YTGxSRERSWGZIaUQ0Z2d0TmJyM2l6Sm1jWk15VmFyRnhudkpoZmdIUWUyU08zRm1jWlBid2F1dzZvakJrZFZ6VjN4bGVRSXFEaVFSemdFaXR2Vm5sWk81OFhkdjU1Y1RTZ3ppdXZSNEN2b2JJcVk0SmxlSGtxMnNQU3RkeEE9PTwvU1A+",
+    "rtFa": "ShbSktOj/VF7+ifZQNdsRGK/Bl4EGD7YzPFNKFiqMi4mMDU4OTRhZjAtY2IyOC00NmQ4LTg3MTYtNzRjZGI0NmUyMjI2IzEzMzgxODkyODU3MTkwNjQ1NCNlYzg2NzlhMS04MGQyLTQwMDAtNGM2Zi0wYzY4MzQ5YmNlMDIjMDAxMTEyMDIlNDB1d2EuZWR1LmF1IzE5NTU4MCNiM0lRaDQ1a3lhZnh2ZkpUTlNQM1JzdW9PRk0jUDNtWnBmRU4yeV9rVjhJbG5lUzJXTTJBWkhZazgMTOfcIEAcoww8LSG5uIWPWns9+G8tTLRLgmkeKFqQsZaXN7YDobz0UDEH4NhxNqDSCYJ2XQRT6OMWQmQZR80+3ThlgK3e4OFZeELOMf9ZAtEMlM6lb4iXVASLR7qAU4BO1V/3GjGLw4kF0YRthAOGBpyRWYHXDMYlPyo1QVua/YGMyCLSDKNug73pJ+/WXmdYZSgM94hooWjYBi2au+4R4RPQbszc+jQO0abShcNqzqi9YXlltqS1LogvQyrdDLFnJyJzDqgnl1v9lkNvlC8JXHhiRwsR3YvGHW+Gzlmyg3MtmDFbmIH0WXUCZOv21RD+l2qASl1ItrULJ1yBR9IAAAA=",
+}
+
+# File URL (relative to the SharePoint site)
+file_path = '/teams/EXT-OceanOmicsLab/Shared%20Documents/Database/LCA%20summary_v2.xlsx'
+file_url = f"{site_url}/_api/web/GetFileByServerRelativeUrl('{file_path}')/$value"
+
+print("Final URL:", file_url)
+
+# Make the request
+response = requests.get(file_url, cookies=cookies)
+
+if response.status_code == 200:
+    with open("LCA.xlsx", "wb") as file:
+        file.write(response.content)
+    print("File downloaded successfully")
+else:
+    print(f"Failed to download file: {response.status_code}")
+    print("Response content:", response.text)

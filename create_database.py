@@ -63,6 +63,7 @@ def create_postgresql_db():
         cursor.execute(
             """
             CREATE TABLE IF NOT EXISTS "Sample" (
+            og_num INTEGER GENERATED ALWAYS AS (substring(og_id FROM 3)::INTEGER) STORED,
             og_id TEXT PRIMARY KEY,
             field_id TEXT,
             nominal_species_id TEXT,
