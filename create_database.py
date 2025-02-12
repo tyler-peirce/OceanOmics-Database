@@ -69,7 +69,7 @@ def create_postgresql_db():
             common_name TEXT,
             collector TEXT,
             contact TEXT,
-            date_collected TEXT,
+            date_collected DATE,
             sex TEXT,
             weight REAL,
             lengthTL_and_lengthFL TEXT,
@@ -121,8 +121,7 @@ def create_postgresql_db():
             ncbi_bioproject_id_draft TEXT,
             illumina_public TEXT,
             draft_sra_accessions TEXT,
-            draft_assembly_accession TEXT,
-            CONSTRAINT fk_nominal_species FOREIGN KEY (nominal_species_id) REFERENCES "Species" (species)
+            draft_assembly_accession TEXT
             );
             """
         )
@@ -191,7 +190,7 @@ def create_postgresql_db():
             ext_num INTEGER,
             status TEXT,
             extraction_method TEXT,
-            extraction_date TEXT,
+            extraction_date DATE,
             extraction_batch_id TEXT,
             final_buffer TEXT,
             volume INTEGER,
@@ -224,7 +223,7 @@ def create_postgresql_db():
             tissue_id TEXT,
             lysate_num INTEGER,
             lysate_status TEXT,
-            lysate_prep_date TEXT,
+            lysate_prep_date DATE,
             lysate_batch_id TEXT,
             lysate_conc REAL,
             total_lysate REAL,
@@ -335,7 +334,7 @@ def create_postgresql_db():
             hic_num INTEGER,
             hic_status TEXT,
             library_method TEXT,
-            library_date TEXT,
+            library_date DATE,
             library_id TEXT,
             prox_ligation_conc REAL,
             purified_dna_total REAL,
@@ -353,6 +352,7 @@ def create_postgresql_db():
             """
             CREATE TABLE IF NOT EXISTS "Sequencing" (
             sequencing_id TEXT PRIMARY KEY,
+            og_num TEXT GENERATED ALWAYS AS (substring(sequencing_id FROM '([A-Z]{2}[0-9]+)')) STORED,
             rna_library_tube_id TEXT,
             illumina_library_tube_id TEXT,
             ont_library_tube_id TEXT,
@@ -360,8 +360,9 @@ def create_postgresql_db():
             hic_library_tube_id TEXT,
             technology TEXT,
             instrument TEXT,
-            run_date TEXT,
+            run_date DATE,
             run_id TEXT,
+            seq_date TEXT GENERATED ALWAYS AS (split_part(run_id, '_', 2)) STORED,
             cell_id TEXT,
             smrt_num INTEGER,
             seq_comments TEXT,

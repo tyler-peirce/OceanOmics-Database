@@ -64,13 +64,8 @@ def insert_sample(cursor, row):
         bioproject_sequencing_data,
         ncbi_assembly_upload,
         ncbi_raw_reads_upload,
-        hifi_public,
-        illumina_lca,
-        ncbi_bioproject_id_draft,
-        illumina_public,
-        draft_sra_accessions,
-        draft_assembly_accession
-    ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
+        hifi_public
+    ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
     """
 
     # Prepare parameters
@@ -128,12 +123,7 @@ def insert_sample(cursor, row):
         row["bioproject_sequencing_data"],
         str(row["ncbi_assembly_upload"]) if row["ncbi_assembly_upload"] else None,
         row["ncbi_raw_reads_upload"],
-        str(row["hifi_public"]) if row["hifi_public"] else None,
-        row["illumina_lca"],
-        row["ncbi_bioproject_id_draft"],
-        str(row["illumina_public"]) if row["illumina_public"] else None,
-        str(row["draft_sra_accessions"]) if row["draft_sra_accessions"] else None,
-        str(row["draft_assembly_accession"]) if row["draft_assembly_accession"] else None,
+        str(row["hifi_public"]) if row["hifi_public"] else None
     )
 
     # Debugging: Log the query and parameters
@@ -1304,12 +1294,7 @@ def update_sample(cursor, row):
         bioproject_sequencing_data = %s,
         ncbi_assembly_upload = %s,
         ncbi_raw_reads_upload = %s,
-        hifi_public = %s,
-        illumina_lca = %s,
-        ncbi_bioproject_id_draft = %s,
-        illumina_public = %s,
-        draft_sra_accessions = %s,
-        draft_assembly_accession = %s
+        hifi_public = %s
     WHERE og_id = %s;
     """
 
@@ -1369,11 +1354,6 @@ def update_sample(cursor, row):
         str(row["ncbi_assembly_upload"]) if row["ncbi_assembly_upload"] else None,
         row["ncbi_raw_reads_upload"],
         str(row["hifi_public"]) if row["hifi_public"] else None,
-        row["illumina_lca"],
-        row["ncbi_bioproject_id_draft"],
-        str(row["illumina_public"]) if row["illumina_public"] else None,
-        str(row["draft_sra_accessions"]) if row["draft_sra_accessions"] else None,
-        str(row["draft_assembly_accession"]) if row["draft_assembly_accession"] else None,
         row["og_id"],  # This is the WHERE clause parameter
     )
 

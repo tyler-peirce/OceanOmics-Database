@@ -21,15 +21,15 @@ try:
             'port': 5432          # Default PostgreSQL port
         }
 
-    excel_path = "data/OceanGenomes Database v5.Feb24.xlsx"
-    draft_path = "data/draftGenomes.csv"
-    mito_path = "data/mtDNAdata.tsv"
-    protein_path = "data/proteinseqdata.tsv"
-    accession_path = "data/Genbank_accession_numbers_240605.tsv"
+    excel_path = "OceanGenomes_database_250211.xlsx"
+    draft_path = ""
+    mito_path = ""
+    protein_path = ""
+    accession_path = "Genbank_accession_numbers_240605.tsv"
     lca_paths = ["data/LCA_12s_NCBI.tsv", "data/LCA_16s_NCBI.tsv", "data/LCA_COX1_BOLD.tsv", "data/LCA_COX1_NCBI.tsv"]
-    tolid_path = "data/TOLID.xlsx"
-    master_species_path = "data/Master Species List - Marine Vertebrates.xlsx"
-    pacbio_qc_path = "data/1.PacBReadsQC.xlsx"
+    tolid_path = "TOLID_250211.xlsx"
+    master_species_path = "Master_species_list250211.xlsx"
+    pacbio_qc_path = ""
 
     print("Connecting to PostgreSQL database...")
     conn = psycopg2.connect(**db_params)
@@ -152,12 +152,7 @@ try:
                 "BioProject ID_Sequencing data": "bioproject_sequencing_data",
                 "NCBI_Assembly_Upload": "ncbi_assembly_upload",
                 "NCBI_Raw_Reads_Upload": "ncbi_raw_reads_upload",
-                "HiFi - Public": "hifi_public",
-                "Illumina_LCA": "illumina_lca",
-                "NCBI BioProject ID - DRAFT": "ncbi_bioproject_id_draft",
-                "Illumina - Public": "illumina_public",
-                "Draft SRA accessions": "draft_sra_accessions",
-                "Draft Assembly Accession": "draft_assembly_accession",
+                "HiFi - Public": "hifi_public"
             })
             df = pd.merge(df, tolid_df, on = "og_id")
 
@@ -178,11 +173,11 @@ try:
             cols_to_update.append("ncbi_assembly_upload")
             cols_to_update.append("ncbi_raw_reads_upload")
             cols_to_update.append("hifi_public")
-            cols_to_update.append("illumina_lca")
-            cols_to_update.append("ncbi_bioproject_id_draft")
-            cols_to_update.append("illumina_public")
-            cols_to_update.append("draft_sra_accessions")
-            cols_to_update.append("draft_assembly_accession")
+            #cols_to_update.append("illumina_lca")
+            #cols_to_update.append("ncbi_bioproject_id_draft")
+            #cols_to_update.append("illumina_public")
+            #cols_to_update.append("draft_sra_accessions")
+            #cols_to_update.append("draft_assembly_accession")
 
         insert_query_string = ""
         insert_query_string_suffix = ""
