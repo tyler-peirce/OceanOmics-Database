@@ -21,12 +21,12 @@ try:
             'port': 5432          # Default PostgreSQL port
         }
 
-    excel_path = "OceanGenomes_database_250211.xlsx"
+    excel_path = "OceanGenomes_database_250213.xlsx"
     draft_path = ""
-    mito_path = ""
+    mito_path = "mtdnastat.250211.tsv"
     protein_path = ""
     accession_path = "Genbank_accession_numbers_240605.tsv"
-    lca_paths = ["data/LCA_12s_NCBI.tsv", "data/LCA_16s_NCBI.tsv", "data/LCA_COX1_BOLD.tsv", "data/LCA_COX1_NCBI.tsv"]
+    lca_paths = "lca.tsv"
     tolid_path = "TOLID_250211.xlsx"
     master_species_path = "Master_species_list250211.xlsx"
     pacbio_qc_path = ""
@@ -381,6 +381,9 @@ try:
         else:
             # Insert the row if it doesn't exist
             queries.insert_mito(cursor, primary_key, sequencing_id, row)
+    
+    # Add in the accession numbers
+    
 
 # Import LCA Data
     print(f"Importing data from {str(lca_paths)}")

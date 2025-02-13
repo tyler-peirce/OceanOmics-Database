@@ -17,44 +17,47 @@ def create_postgresql_db():
         conn = psycopg2.connect(**db_params)
         cursor = conn.cursor()
 
+        # ✅ Print a success message if connected
+        print("✅ Successfully connected to PostgreSQL!")
+
         # Species Table
         cursor.execute(
             """
             CREATE TABLE IF NOT EXISTS "Species" (
-            species TEXT PRIMARY KEY,
-            class TEXT,
-            ordr TEXT,
-            family TEXT,
-            genus TEXT,
-            epithet TEXT,
-            afd_common_name TEXT,
-            family_common_name TEXT,
-            ncbi_taxon_id INTEGER,
-            synonym TEXT,
-            specimen_tol_id TEXT,
-            sequencing_status TEXT,
-            ont TEXT,
-            hifi TEXT,
-            hic TEXT,
-            draft_sequencing_status TEXT,
-            illumina TEXT,
-            draft_genome_bioproject_id TEXT,
-            genome_available TEXT,
-            internal_aus_status_fishbase TEXT,
-            cites_listing TEXT,
-            iucn_code TEXT,
-            iucn_assessment TEXT,
-            iucn_dateassessed TEXT,
-            epbc TEXT,
-            internal_first_in_family TEXT,
-            internal_first_in_genus TEXT,
-            internal_conservation_value TEXT,
-            internal_research TEXT,
-            internal_endemic TEXT,
-            sequencing_priority TEXT,
-            collaboration TEXT,
-            comments TEXT,
-            lab_database_status TEXT
+                species TEXT PRIMARY KEY,
+                class TEXT,
+                "ordr" TEXT,
+                family TEXT,
+                genus TEXT,
+                epithet TEXT,
+                afd_common_name TEXT,
+                family_common_name TEXT,
+                ncbi_taxon_id INTEGER,
+                synonym TEXT,
+                specimen_tol_id TEXT,
+                sequencing_status TEXT,
+                ont TEXT,
+                hifi TEXT,
+                hic TEXT,
+                draft_sequencing_status TEXT,
+                illumina TEXT,
+                draft_genome_bioproject_id TEXT,
+                genome_available TEXT,
+                internal_aus_status_fishbase TEXT,
+                cites_listing TEXT,
+                iucn_code TEXT,
+                iucn_assessment TEXT,
+                iucn_dateassessed TEXT,
+                epbc TEXT,
+                internal_first_in_family TEXT,
+                internal_first_in_genus TEXT,
+                internal_conservation_value TEXT,
+                internal_research TEXT,
+                internal_endemic TEXT,
+                sequencing_priority TEXT,
+                collaboration TEXT,
+                comments TEXT,
+                lab_database_status TEXT
             );
             """
         )
@@ -157,7 +160,7 @@ def create_postgresql_db():
             ext_num INTEGER,
             status TEXT,
             extraction_method TEXT,
-            extraction_date TEXT,
+            extraction_date DATE,
             extraction_batch_id TEXT,
             final_buffer TEXT,
             volume INTEGER,
@@ -202,7 +205,7 @@ def create_postgresql_db():
             ratioqubit_nanodrop REAL,
             total_yield INTEGER,
             gdna_femtol_id TEXT,
-            av_size INTEGER,
+            av_size TEXT,
             extraction_qc TEXT,
             comment TEXT,
             dna_freezer TEXT,
@@ -368,11 +371,104 @@ def create_postgresql_db():
             smrt_num INTEGER,
             seq_comments TEXT,
             seq_type TEXT,
+
+            -- Foreign Key Constraints for Libraries
             CONSTRAINT fk_rna_library FOREIGN KEY (rna_library_tube_id) REFERENCES "RNA_Library" (rna_library_tube_id),
             CONSTRAINT fk_illumina_library FOREIGN KEY (illumina_library_tube_id) REFERENCES "Illumina_Library" (illumina_library_tube_id),
             CONSTRAINT fk_ont_library FOREIGN KEY (ont_library_tube_id) REFERENCES "ONT_Library" (ont_library_tube_id),
             CONSTRAINT fk_pacbio_library FOREIGN KEY (pacbio_library_tube_id) REFERENCES "PacBio_Library" (pacbio_library_tube_id),
             CONSTRAINT fk_hic_library FOREIGN KEY (hic_library_tube_id) REFERENCES "HiC_Library" (hic_library_tube_id)
+            );
+            """
+        )
+
+        # Mitogenome Table
+        cursor.execute(
+            """
+            CREATE TABLE IF NOT EXISTS mitogenome_data (
+                og_id TEXT NOT NULL,  -- Foreign Key
+                tech TEXT NOT NULL,
+                seq_date INTEGER NOT NULL,  -- Foreign Key
+                code TEXT NOT NULL,
+                stats TEXT,
+                length INTEGER,
+                length_emma INTEGER,
+                seqlength_12s INTEGER,
+                seqlength_16s INTEGER,
+                seqlength_CO1 INTEGER,
+                cds_no INTEGER,
+                trna_no INTEGER,
+                rrna_no INTEGER,
+                status TEXT,
+                genbank TEXT,
+                rrna12s INTEGER,
+                rrna16s INTEGER,
+                atp6 INTEGER,
+                atp8 INTEGER,
+                cox1 INTEGER,
+                cox2 INTEGER,
+                cox3 INTEGER,
+                cytb INTEGER,
+                nad1 INTEGER,
+                nad2 INTEGER,
+                nad3 INTEGER,
+                nad4 INTEGER,
+                nad4l INTEGER,
+                nad5 INTEGER,
+                mad6 INTEGER,
+                tRNA_Phe INTEGER,
+                tRNA_Val INTEGER,
+                tRNA_LeuUAG INTEGER,
+                tRNA_LeuUAA INTEGER,
+                tRNA_Ile INTEGER,
+                tRNA_Met INTEGER,
+                tRNA_Thr INTEGER,
+                tRNA_Pro INTEGER,
+                tRNA_Lys INTEGER,
+                tRNA_Asp INTEGER,
+                tRNA_Glu INTEGER,
+                tRNA_SerGCU INTEGER,
+                tRNA_SerUGA INTEGER,
+                tRNA_Tyr INTEGER,
+                tRNA_Cys INTEGER,
+                tRNA_Trp INTEGER,
+                tRNA_Ala INTEGER,
+                tRNA_Asn INTEGER,
+                tRNA_Gly INTEGER,
+                tRNA_Arg INTEGER,
+                tRNA_His INTEGER,
+                tRNA_Gln INTEGER,
+
+                -- Composite Primary Key
+                PRIMARY KEY (og_id, tech, date, code)
+            );
+            """
+        )
+
+
+        # Mitogenome Table
+        cursor.execute(
+            """
+            CREATE TABLE IF NOT EXISTS lca (
+                og_id TEXT NOT NULL,
+                tech TEXT NOT NULL,
+                date INTEGER NOT NULL,
+                code TEXT NOT NULL,
+                annotation TEXT NOT NULL,
+                taxonomy TEXT,
+                lca TEXT,
+                percent_match DECIMAL(5,2),
+                length INTEGER,
+                region TEXT NOT NULL,
+
+                -- Composite Primary Key
+                PRIMARY KEY (og_id, tech, date, code, annotation, region),
+
+                -- Foreign Key Constraints (Referencing mitogenome_data)
+                CONSTRAINT fk_mitogenome FOREIGN KEY (og_id, tech, date, code) 
+                    REFERENCES mitogenome_data(og_id, tech, date, code)
+                    ON UPDATE CASCADE
+                    ON DELETE CASCADE
             );
             """
         )
