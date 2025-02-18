@@ -388,7 +388,7 @@ def create_postgresql_db():
             CREATE TABLE IF NOT EXISTS mitogenome_data (
                 og_id TEXT NOT NULL,  -- Foreign Key
                 tech TEXT NOT NULL,
-                seq_date INTEGER NOT NULL,  -- Foreign Key
+                seq_date TEXT NOT NULL,  -- Foreign Key
                 code TEXT NOT NULL,
                 stats TEXT,
                 length INTEGER,
@@ -440,35 +440,111 @@ def create_postgresql_db():
                 tRNA_Gln INTEGER,
 
                 -- Composite Primary Key
-                PRIMARY KEY (og_id, tech, date, code)
+                PRIMARY KEY (og_id, tech, seq_date, code)
             );
             """
         )
 
 
-        # Mitogenome Table
+        # LCA Table
         cursor.execute(
             """
             CREATE TABLE IF NOT EXISTS lca (
                 og_id TEXT NOT NULL,
                 tech TEXT NOT NULL,
-                date INTEGER NOT NULL,
+                seq_date TEXT NOT NULL,
                 code TEXT NOT NULL,
                 annotation TEXT NOT NULL,
                 taxonomy TEXT,
                 lca TEXT,
                 percent_match DECIMAL(5,2),
                 length INTEGER,
+                lca_run_date TEXT,
                 region TEXT NOT NULL,
 
                 -- Composite Primary Key
-                PRIMARY KEY (og_id, tech, date, code, annotation, region),
+                PRIMARY KEY (og_id, tech, seq_date, code, annotation, region),
 
                 -- Foreign Key Constraints (Referencing mitogenome_data)
-                CONSTRAINT fk_mitogenome FOREIGN KEY (og_id, tech, date, code) 
-                    REFERENCES mitogenome_data(og_id, tech, date, code)
-                    ON UPDATE CASCADE
-                    ON DELETE CASCADE
+                CONSTRAINT fk_mitogenome FOREIGN KEY (og_id, tech, seq_date, code) 
+                    REFERENCES mitogenome_data(og_id, tech, seq_date, code)
+            );
+            """
+        )
+    
+    # Draft Genome Table
+        cursor.execute(
+            """
+            CREATE TABLE IF NOT EXISTS draft_genomes (
+                sample TEXT,
+                mach TEXT,
+                seq_date TEXT,
+                initial TEXT,
+                passed_filter_reads INTEGER,
+                low_quality_reads INTEGER,
+                too_many_n_reads INTEGER,
+                too_short_reads INTEGER,
+                too_long_reads INTEGER,
+                raw_total_reads BIGINT,
+                raw_total_bases BIGINT,
+                raw_q20_bases BIGINT,
+                raw_q30_bases BIGINT,
+                raw_q20_rate DECIMAL(7,6),
+                raw_q30_rate DECIMAL(7,6),
+                raw_read1_mean_length INTEGER,
+                raw_read2_mean_length INTEGER,
+                raw_gc_content DECIMAL(7,6),
+                total_reads BIGINT,
+                total_bases BIGINT,
+                q20_bases BIGINT,
+                q30_bases BIGINT,
+                q20_rate DECIMAL(7,6),
+                q30_rate DECIMAL(7,6),
+                read1_mean_length INTEGER,
+                read2_mean_length INTEGER,
+                gc_content DECIMAL(7,6),
+                homozygosity DECIMAL(4,2),
+                heterozygosity DECIMAL(4,2),
+                genomesize BIGINT,
+                repeatsize BIGINT,
+                uniquesize BIGINT,
+                modelfit DECIMAL(5,2),
+                errorrate DECIMAL(5,2),
+                num_contigs INTEGER,
+                num_contigs_mitochondrion INTEGER,
+                num_contigs_plastid INTEGER,
+                num_contigs_prokarya INTEGER,
+                bp_mitochondrion BIGINT,
+                bp_plastid BIGINT,
+                bp_prokarya BIGINT,
+                complete DECIMAL(4,1),
+                single_copy DECIMAL(4,1),
+                multi_copy DECIMAL(4,1),
+                fragmented DECIMAL(4,1),
+                missing DECIMAL(4,1),
+                n_markers INTEGER,
+                domain TEXT,
+                number_of_scaffolds INTEGER,
+                number_of_contigs INTEGER,
+                total_length BIGINT,
+                percent_gaps DECIMAL(5,2),
+                scaffold_n50 INTEGER,
+                contigs_n50 INTEGER,
+                unique_k_mers_assembly BIGINT,
+                k_mers_total BIGINT,
+                qv DECIMAL(6,4),
+                error DECIMAL(12,11),
+                k_mer_set TEXT,
+                solid_k_mers BIGINT,
+                total_k_mers BIGINT,
+                completeness DECIMAL(7,4),
+                depmethod TEXT,
+                adjust TEXT,
+                readbp BIGINT,
+                mapadjust DECIMAL(7,6),
+                scdepth DECIMAL(4,2),
+                estgenomesize BIGINT,
+                PRIMARY KEY (sample, seq_date)  -- Composite Primary Key
             );
             """
         )
